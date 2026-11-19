@@ -1,141 +1,58 @@
-# News sources — 19 November 2026 (Thursday)
+# Sources — Thursday 19 November 2026
 
-Checked live 19 Nov 2026 ~15:20 WITA. Every headline on the image is
-corroborated by at least one of these live sources, all dated 19 Nov 2026:
+Every story on the front page happened, or was first reported, on
+Thursday 19 November 2026. One live source per story below.
 
-- **OneTurn** (oneturn.news/news/) — "World news today: Trump, Xi, Putin
-  Meet in Shenzhen", 54 stories + 16 in brief, updated 12:04 AM ET.
-- **Roman Report, Midnight ET edition** (report.meforum.org) — 53 headlines,
-  19 Nov 2026.
-- **Dubai Standard** — "US-Israel-Iran war: What UAE residents need to know
-  on November 19, 2026".
-- **The Paris Eye** (thepariseye.com/breaking-news) — items timestamped
-  19 Nov 2026, 06:14 AM.
-- **News Media House** (newsmediahouse.com/section/world/) — staff items
-  dated November 19, 2026.
-- **AppiSToS** (appistos.gr) — world wire items timestamped 19.11.2026.
-- **Times of India** (world section, 19 Nov 2026).
+## Drawn stories (1–12)
 
-## Lead
+1. Trump, Xi & Putin meet in Shenzhen — https://oneturn.news/news/ ; https://www.ajupress.com//view/20261119084715993
+2. ICJ finds Myanmar responsible for Rohingya genocide, 9–6 — https://newstro.com/articles/world-court-rules-myanmar-committed-rohingya-genocide-2026.html ; https://headlinesxtra.com/2026/11/19/icj-world-court-rohingya-genocide-case-myanmar-judgment-november-19-2026/
+3. Anthropic IPO $81.3bn at $83/share, $1.5tn valuation — https://www.globalbankingandfinance.com/morning-bid-loading-claude-gta-vi/ ; https://www.morningstar.com/news/dow-jones/20261119350/dow-jones-top-company-headlines-at-1-am-et-anthropic-raises-81-billion-in-biggest-ipo-ever-lenovo
+4. GTA VI launches worldwide — https://www.globalbankingandfinance.com/morning-bid-loading-claude-gta-vi/ ; https://oneturn.news/news/
+5. Ukraine strikes Crimean Bridge again, traffic halted — https://www.horizonapp.link/en/2026/11/19 ; https://nexuseuropa.eu/en/top-news/2026-11-19-1000
+6. Iran attacks Gulf states; Kuwait repels, Bahrain hit — https://www.horizonapp.link/en/2026/11/19 ; https://oneturn.news/news/
+7. COP31 ministers try to unblock talks in Antalya — https://www.horizonapp.link/en/2026/11/19 ; https://oneturn.news/news/
+8. Bangladesh unrest: Yunus home torched, 28 districts hit — https://www.horizonapp.link/en/2026/11/19 ; https://openchronicle.org/2026/11/19/global-news-brief-key-developments-around-the-world-november-19-2026/
+9. US & Venezuela sign military cooperation agreement — https://www.horizonapp.link/en/2026/11/19 ; https://oneturn.news/news/
+10. EU proposes €45bn loan for Ukraine — https://www.horizonapp.link/en/2026/11/19 ; https://oneturn.news/news/
+11. Van Gogh sells for $190.4m, artist record — https://www.horizonapp.link/en/2026/11/19
+12. Voyager 1 one light-day from Earth — https://oneturn.news/news/
 
-1. **Trump, Xi and Putin meet in Shenzhen** — OneTurn (lead story,
-   reported by 13 outlets: CBS News, Japan Times, BBC News): the three
-   presidents met in Shenzhen on the APEC sidelines, first three-way talks;
-   agenda covers Ukraine and Iran, nuclear weapons, trade and AI.
+## Numbered briefs (13–42)
 
-## Middle East
+13. IAEA: North Korea expanded uranium enrichment — https://www.horizonapp.link/en/2026/11/19 ; https://oneturn.news/news/
+14. Israel ground operation beyond Gaza Yellow Line — https://www.horizonapp.link/en/2026/11/19 ; https://oneturn.news/news/
+15. Ethiopia & Eritrea mass troops at border — https://www.horizonapp.link/en/2026/11/19 ; https://oneturn.news/news/
+16. 589m children in conflict zones in 2025 — https://www.horizonapp.link/en/2026/11/19 ; https://oneturn.news/news/
+17. Fiji & Tonga drought emergencies — https://www.horizonapp.link/en/2026/11/19 ; https://oneturn.news/news/
+18. Indonesia fires burn ~3m hectares — https://www.horizonapp.link/en/2026/11/19
+19. Indonesia passes asset-forfeiture law — https://www.horizonapp.link/en/2026/11/19
+20. South Korea exports pass $1tn — https://www.horizonapp.link/en/2026/11/19
+21. South Korea college exam under AI-cheating curbs — https://oneturn.news/news/
+22. IMF: global public debt near 100% of GDP — https://www.horizonapp.link/en/2026/11/19
+23. IMF deal unlocks $2.3bn for Egypt — https://oneturn.news/news/
+24. Markets: Hang Seng −1.9%, FTSE −1.3%, Brent $89.59, Bitcoin $63,552 — https://www.horizonapp.link/en/2026/11/19 ; https://oneturn.news/news/
+25. Trump hints at selling Blackwell chips to China — https://www.horizonapp.link/en/2026/11/19
+26. Nvidia board rejects Huang's return as CEO — https://www.eetimes.com/nvidia-reports-115-8b-in-quarterly-revenue-under-interim-ceo/
+27. US loses measles elimination status — https://oneturn.news/news/
+28. Ebola strain vaccines to be trialled in DR Congo — https://oneturn.news/news/
+29. Webb confirms rare supergiant star merger — https://oneturn.news/news/
+30. Antarctic blue whales up tenfold since whaling ended — https://oneturn.news/news/
+31. Waymo pulls driverless taxis off US freeways — https://oneturn.news/news/
+32. Cyclone Aqwan heads for India's east coast — https://oneturn.news/news/
+33. Record rain from atmospheric river hits California — https://oneturn.news/news/
+34. Democrats win Alaska seat, 56-seat Senate majority — https://oneturn.news/news/
+35. Democrats pick Hakeem Jeffries as Speaker nominee — https://www.horizonapp.link/en/2026/11/19
+36. Pastor convicted over Haiti president Moïse's 2021 assassination — https://www.horizonapp.link/en/2026/11/19
+37. Imamoglu + 8 sentenced in Turkey CHP case — https://oneturn.news/news/
+38. Five EU nations plan Rwanda asylum transfers — https://oneturn.news/news/
+39. Alcaraz beats Medvedev at ATP Finals — https://oneturn.news/news/
+40. Chelsea beat PSG 1–0, Women's Champions League — https://oneturn.news/news/
+41. England win ODI series in Australia — https://oneturn.news/news/
+42. Buffalo beat Central Michigan 40–21 — https://ubbulls.com/news/2026/11/19/football-bulls-grill-central-michigan-40-21
 
-2. **Iran strikes Gulf states after U.S. hit on Qeshm** — OneTurn;
-   Dubai Standard (Iran said its drones targeted Patriot systems at Ali Al
-   Salem Air Base, Kuwait); Roman Report ("Iran attacks Bahrain and Kuwait
-   as Middle East tensions flare").
-3. **Kuwait says it repelled Iranian attack** — Roman Report, 19 Nov.
-4. **Tanker struck near Khasab, Strait of Hormuz** — Dubai Standard
-   (UKMTO: projectile struck a tanker's engine room ~6 nm north of Khasab,
-   crew safe as of 02:30, 19 Nov); AppiSToS ("UKMTO 212: time-late report
-   of tanker strike in Hormuz").
-5. **Houthi missile aimed at Riyadh intercepted** — Dubai Standard
-   (Saudi-led coalition intercepted a Houthi cruise missile towards
-   southern Saudi Arabia); AppiSToS (coalition reports missile threat
-   towards Riyadh, 19 Nov).
-6. **Israel ground operation beyond Yellow Line, central Gaza** — OneTurn.
-7. **Eisenkot tapped to form Israeli government** — The Paris Eye, 19 Nov
-   06:14: President Herzog asked Gadi Eisenkot to try to form the next
-   government, bypassing Netanyahu.
+## Deliberately left out (wrong date — see DATE CHECK box)
 
-## Europe
-
-8. **Ukraine hits Crimean Bridge a third time this week** — OneTurn;
-   AppiSToS (Aksyonov announces temporary traffic closure on the Crimea
-   bridge, 19 Nov 02:06, attributing it to another attack).
-9. **World court set to rule on Myanmar Rohingya genocide case** — OneTurn
-   ("UN court to rule on Myanmar Rohingya genocide case"; the day's lead
-   notes the world's top court prepares to rule).
-10. **Imamoglu sentenced in CHP case** — OneTurn (court sentences Imamoglu
-    and eight others, Ankara).
-11. **France: fourth weekend of cost-of-living protests** — The Paris Eye,
-    19 Nov 06:14.
-12. **Five EU nations plan Rwanda asylum transfers** — OneTurn.
-
-## Asia-Pacific
-
-13. **IAEA: North Korea expanded uranium enrichment** — OneTurn (Yongbyon).
-14. **Cyclone Aqwan nears India's east coast** — OneTurn (Bay of Bengal).
-15. **South Korea college exam under AI-cheating curbs** — OneTurn (Seoul).
-16. **Unrest in Bangladesh over Hasina's return** — OneTurn (wage demands).
-17. **U.S., Philippines pursue $2bn+ loan package** — AppiSToS, 19 Nov
-    05:23: White House announces pursuit of a loan package exceeding
-    $2 billion.
-18. **Suicide bombing kills 5 in Pakistan** — Times of India, 19 Nov
-    (car bombing at a security checkpoint kills 5, injures 13).
-
-## Americas
-
-19. **Trump: Iran seeking chemical, biological weapons** — OneTurn
-    (Washington); News Media House (19 Nov).
-20. **Iran agent jailed 27+ years over Trump assassination plot** — Roman
-    Report, 19 Nov.
-21. **Judge extends block on Trump memorial arch** — Times of India, 19 Nov
-    (Judge Chutkan extends the halt 14 days).
-22. **Florida floods shut roads and schools** — Times of India, 19 Nov.
-23. **U.S., Venezuela restore military cooperation** — OneTurn.
-
-## Africa
-
-24. **Ethiopia, Eritrea mass troops on border** — OneTurn.
-25. **Sudan: drones drive civilian toll** — OneTurn (aid for displaced,
-    El Dabba).
-26. **Somalia crisis deepens over reforms** — News Media House, 19 Nov.
-
-## Oceania
-
-27. **Fiji, Tonga declare El Nino drought emergencies** — OneTurn
-    (Nuku'alofa, Tonga).
-28. **Australia jobless rate rises to 4.9%** — OneTurn (Canberra).
-
-## Markets & Tech
-
-29. **Anthropic prices record IPO at $83 a share** — OneTurn (North
-    America); the 19 Nov leaderboard notes the record IPO as a lead story
-    of the day.
-30. **AI worries drag stocks lower** — OneTurn economy section: Hang Seng
-    fell 2.78%, FTSE 100 fell 1.3%, Fed minutes flagged AI investment
-    risks.
-31. **Gold, copper and bitcoin slide** — OneTurn economy section.
-32. **GTA VI goes on sale after 13-year wait** — OneTurn (Technology);
-    Times of India, 19 Nov (console players lack a 60 FPS mode; Rockstar
-    targets 30 FPS on PS5/Xbox; ~1 in 5 US workers plan time off).
-33. **Waymo pulls driverless taxis off freeways** — OneTurn (San Francisco).
-34. **IMF deal unlocks $2.3bn for Egypt** — OneTurn (Cairo).
-
-## Science & Health
-
-35. **Strain-specific Ebola vaccines to be trialled in DR Congo** — OneTurn
-    (Health, eastern DR Congo).
-36. **Alzheimer's, brain-tumour studies advance** — OneTurn (Science, UK).
-37. **Webb confirms rare star merger** — OneTurn (Space, Pasadena).
-38. **Antarctic blue whales up tenfold** — OneTurn (Climate, Antarctica).
-
-## Sport & Culture
-
-39. **Alcaraz beats Medvedev at ATP Finals** — OneTurn (Turin).
-40. **Chelsea beat PSG 1-0 in women's Champions League** — OneTurn (London).
-41. **England win ODI series in Australia** — OneTurn (Hobart).
-42. **'Human' is Cambridge word of the year** — OneTurn (Cambridge);
-    Times of India, 19 Nov ("'Human' is Cambridge dictionary's word
-    of '26").
-
-## Markets footer
-
-S&P 500 7,324 (-0.23%), Hang Seng -2.78%, FTSE 100 10,551 (-1.30%),
-Brent crude $89.30 — OneTurn economy section, 19 Nov 2026.
-
-## DATE CHECK — deliberately left out (18 Nov news, not 19 Nov)
-
-- EU–Indonesia trade pact: Council decision was 18 Nov (AppiSToS,
-  18 Nov 19:08).
-- U.S. loses measles-elimination status: reported 18 Nov (also on our
-  18 Nov entry).
-- Alaska Senate result (Peltola flips Alaska, Democrats 56–44): 18 Nov.
-- EU's €45bn Ukraine loan: announced 18 Nov.
-- Voyager 1 one light-day from Earth: 18 Nov.
+- Capture of Nicolás Maduro — 3 January 2026 (background to story 9 only).
+- The 2017 Rohingya crackdown in Rakhine State — background to story 2 only.
+- The Van Gogh canvas itself was painted in 1890; the record sale was reported 19 Nov 2026.
