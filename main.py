@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
-"""Entry for make.fun bounty news-image-20261119.
+"""Copy the bundled front page into the output directory.
 
-Writes the pre-rendered summary of the world's news of Thursday
-19 November 2026 (news.png, in this repository) to /output/entry.png.
-
-Deterministic: copies the same bytes on every run. No network, no
-randomness, no model calls. Python 3.13 standard library only.
+Entry program for make.fun's news-image-20261119 bounty. It takes no
+input and uses no network: it only copies news.png to
+/output/entry.png (or $MAKEFUN_OUTPUT_DIR/entry.png when that is set),
+so two runs always write identical bytes.
 """
+
 import os
 import shutil
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-
 
 def main():
-    src = os.path.join(HERE, "news.png")
-    os.makedirs("/output", exist_ok=True)
-    shutil.copyfile(src, "/output/entry.png")
+    here = os.path.dirname(os.path.abspath(__file__))
+    source = os.path.join(here, "news.png")
+    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
+    os.makedirs(out_dir, exist_ok=True)
+    shutil.copyfile(source, os.path.join(out_dir, "entry.png"))
 
 
 if __name__ == "__main__":

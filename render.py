@@ -1,359 +1,399 @@
 #!/usr/bin/env python3
-"""Render the news-summary infographic for make.fun news-image-20261119.
+"""Render the 19 November 2026 front page as a 1024x1024 PNG.
 
-One page, 1024x1024 PNG: the world's news of Thursday 19 November 2026.
-42 stories, 6 continents, masthead date, world map, DATE CHECK box.
-Stories verified against live reporting on 19 Nov 2026 (OneTurn, Roman
-Report / Middle East Forum, Dubai Standard, The Paris Eye, News Media
-House, AppiSToS, Times of India). See SOURCES.md.
-Deterministic output: same bytes every run (no timestamps, no randomness).
+Draws a one-page newspaper: masthead with the day's date, the lead story
+(Trump, Xi and Putin's first three-way summit in Shenzhen), a world map
+with the day's locations, a DATE CHECK box, and 41 more stories in three
+columns across six continents. All headlines come from the STORIES table
+below, each checked against the day's live sources in SOURCES.md.
+
+Deterministic: same input, same bytes, every run. Stdlib plus Pillow.
+Run:  python3 render.py   (writes news.png next to this file)
 """
+
+import hashlib
 import os
+
 from PIL import Image, ImageDraw, ImageFont
 
 W, H = 1024, 1024
-HERE = os.path.dirname(os.path.abspath(__file__))
-PAPER = (250, 246, 238)
-NAVY = (15, 36, 64)
-RED = (185, 28, 28)
-GOLD = (201, 162, 39)
-INK = (20, 33, 61)
-MUTED = (91, 100, 114)
-TILE = (255, 255, 255)
-BORDER = (227, 220, 203)
-MAPLAND = (198, 210, 196)
-MAPSEA = (222, 232, 240)
 
-F_SERIF_B = "/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf"
-F_SANS = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-F_SANS_B = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+PAPER = (246, 241, 227)
+NAVY = (20, 38, 74)
+NAVY_DARK = (13, 26, 52)
+GOLD = (216, 164, 65)
+RED = (178, 34, 34)
+INK = (26, 26, 26)
+GREY = (84, 84, 84)
+SEA = (214, 229, 241)
+LAND = (198, 211, 181)
+LAND_EDGE = (150, 168, 138)
+DOT = (192, 57, 43)
+
+FONT_DIR = "/usr/share/fonts/truetype/dejavu"
+SERIF_B = os.path.join(FONT_DIR, "DejaVuSerif-Bold.ttf")
+SANS_B = os.path.join(FONT_DIR, "DejaVuSans-Bold.ttf")
+SANS = os.path.join(FONT_DIR, "DejaVuSans.ttf")
 
 
 def font(path, size):
     return ImageFont.truetype(path, size)
 
 
-def wrap(draw, text, fnt, max_w):
+# (section, headline, deck) — 41 briefs; the lead story sits above them.
+STORIES = [
+    ("MIDDLE EAST",
+     [("Iran strikes Gulf states after U.S. hit",
+       "Drones hit Patriot sites in Kuwait, Bahrain"),
+      ("Kuwait says it repelled Iranian attack",
+       "Air defences engaged; no casualties reported"),
+      ("Tanker struck near Khasab, Hormuz",
+       "Engine room hit; crew safe, UKMTO says"),
+      ("Houthi missile aimed at Riyadh shot down",
+       "Coalition intercepts cruise missile"),
+      ("Israel pushes ground operation in Gaza",
+       "Troops move beyond the Yellow Line"),
+      ("Eisenkot tapped to form Israel government",
+       "Herzog bypasses Netanyahu")]),
+    ("EUROPE",
+     [("Ukraine hits Crimean Bridge a 3rd time",
+       "Traffic halted after this week's strikes"),
+      ("World court set to rule on Myanmar case",
+       "Rohingya genocide ruling due"),
+      ("Imamoglu sentenced in CHP case",
+       "Ex-Istanbul mayor, eight others convicted"),
+      ("France: 4th weekend of price protests",
+       "Cost-of-living marches continue"),
+      ("Five EU nations plan Rwanda asylum transfers",
+       "Kigali scheme revived by five capitals")]),
+    ("ASIA-PACIFIC",
+     [("IAEA: N. Korea expanded uranium enrichment",
+       "Yongbyon site grew, agency says"),
+      ("Cyclone Aqwan nears India's east coast",
+       "Bay of Bengal landfall expected"),
+      ("S. Korea exam held under AI-cheating curbs",
+       "Phones jammed at Seoul test centres"),
+      ("Unrest in Bangladesh over Hasina's return",
+       "Wage protests spread in Dhaka"),
+      ("U.S., Philippines pursue $2bn+ loan package",
+       "White House announces financing push"),
+      ("Suicide bombing kills 5 in Pakistan",
+       "Checkpoint attack injures 13")]),
+    ("AMERICAS",
+     [("Trump: Iran seeking chemical, biological arms",
+       "President's claim raises stakes"),
+      ("Iran agent jailed 27 years over Trump plot",
+       "U.S. court sentences assassination plotter"),
+      ("Judge extends block on Trump memorial arch",
+       "Washington arch halted 14 more days"),
+      ("Florida floods shut roads and schools",
+       "Torrential rain swamps the state"),
+      ("U.S., Venezuela restore military cooperation",
+       "Military cooperation resumes")]),
+    ("AFRICA",
+     [("Ethiopia, Eritrea mass troops on border",
+       "Forces build up amid war fears"),
+      ("Sudan: drones drive civilian toll",
+       "Aid reaches displaced at El Dabba"),
+      ("Somalia crisis deepens over reforms",
+       "Federal tensions rise in Mogadishu")]),
+    ("OCEANIA",
+     [("Fiji, Tonga declare drought emergencies",
+       "El Nino blamed for water shortages"),
+      ("Australia jobless rate rises to 4.9%",
+       "Canberra reports softening labour market")]),
+    ("MARKETS & TECH",
+     [("Anthropic prices record IPO at $83 a share",
+       "Biggest AI listing yet, debut today"),
+      ("AI worries drag stocks lower",
+       "Hang Seng -2.78%, FTSE 100 -1.30%"),
+      ("Gold, copper and bitcoin slide",
+       "Metals and crypto fall together"),
+      ("GTA VI goes on sale after 13-year wait",
+       "Consoles capped at 30 FPS on launch"),
+      ("Waymo pulls driverless taxis off freeways",
+       "U.S. robotaxi retreat in San Francisco"),
+      ("IMF deal unlocks $2.3bn for Egypt",
+       "Cairo programme resumes")]),
+    ("SCIENCE & HEALTH",
+     [("Strain-specific Ebola vaccines to be trialled",
+       "DR Congo to test new shots"),
+      ("Alzheimer's, brain-tumour studies advance",
+       "UK research points to new treatments"),
+      ("Webb confirms rare star merger",
+       "Telescope confirms the merger"),
+      ("Antarctic blue whales up tenfold",
+       "Recovery since whaling ended")]),
+    ("SPORT & CULTURE",
+     [("Alcaraz beats Medvedev at ATP Finals",
+       "Turin semi-final goes to the Spaniard"),
+      ("Chelsea beat PSG 1-0 in women's UCL",
+       "London win in Champions League"),
+      ("England win ODI series in Australia",
+       "Hobart decider seals the series"),
+      ("'Human' is Cambridge word of the year",
+       "Dictionary picks the word of 2026")]),
+]
+
+# Three columns: which sections go where (balanced by item count).
+COLUMNS = [
+    ["MIDDLE EAST", "EUROPE", "AFRICA"],
+    ["ASIA-PACIFIC", "AMERICAS", "OCEANIA"],
+    ["MARKETS & TECH", "SCIENCE & HEALTH", "SPORT & CULTURE"],
+]
+
+# Rough continent outlines, (lon, lat) — stylised, equirectangular.
+CONTINENTS = [
+    [(-168, 66), (-150, 70), (-135, 69), (-125, 71), (-115, 72), (-100, 73),
+     (-90, 74), (-82, 72), (-75, 70), (-68, 58), (-60, 52), (-55, 47),
+     (-60, 43), (-70, 42), (-75, 35), (-80, 31), (-81, 26), (-84, 30),
+     (-89, 21), (-92, 16), (-97, 16), (-105, 20), (-112, 25), (-118, 32),
+     (-124, 40), (-124, 48), (-132, 58), (-145, 60), (-155, 58),
+     (-162, 58), (-168, 62)],
+    [(-79, 9), (-72, 12), (-62, 10), (-52, 5), (-44, -2), (-35, -8),
+     (-38, -15), (-42, -22), (-48, -27), (-55, -33), (-62, -38),
+     (-68, -45), (-70, -52), (-73, -45), (-73, -35), (-72, -22),
+     (-78, -10), (-81, -3), (-80, 3)],
+    [(-17, 15), (-15, 22), (-10, 29), (-5, 35), (0, 36), (9, 37),
+     (15, 32), (20, 32), (30, 31), (33, 28), (36, 22), (40, 15),
+     (44, 11), (51, 11), (48, 2), (42, -5), (40, -12), (36, -18),
+     (33, -25), (30, -32), (25, -34), (18, -35), (15, -30), (13, -20),
+     (12, -12), (12, -5), (9, 3), (0, 5), (-8, 5), (-13, 8), (-16, 12)],
+    [(-9, 37), (-9, 43), (-2, 47), (-1, 49), (2, 51), (5, 53), (8, 55),
+     (8, 57), (10, 59), (14, 58), (18, 56), (21, 55), (24, 58), (26, 59),
+     (28, 61), (25, 64), (22, 68), (18, 70), (14, 67), (12, 62), (8, 58),
+     (5, 58), (2, 54), (-2, 50), (-5, 47), (-9, 42)],
+    [(30, 62), (35, 66), (42, 68), (52, 69), (62, 70), (72, 72),
+     (85, 74), (100, 77), (115, 73), (130, 72), (145, 72), (160, 69),
+     (178, 65), (172, 62), (162, 58), (158, 52), (150, 59), (142, 52),
+     (140, 45), (135, 43), (130, 40), (127, 38), (122, 32), (118, 28),
+     (110, 21), (108, 18), (105, 10), (100, 8), (97, 10), (94, 17),
+     (90, 20), (86, 20), (80, 13), (77, 8), (74, 15), (70, 22),
+     (66, 25), (61, 25), (57, 26), (54, 27), (50, 29), (47, 30),
+     (44, 29), (40, 31), (36, 33), (33, 36), (30, 36)],
+    [(113, -22), (114, -28), (115, -33), (118, -35), (124, -33),
+     (130, -32), (135, -35), (138, -35), (140, -38), (145, -38),
+     (150, -37), (153, -32), (152, -27), (150, -23), (146, -19),
+     (142, -11), (137, -12), (132, -12), (127, -14), (122, -17),
+     (118, -20)],
+]
+
+# (lon, lat, label or None, label dx, label dy)
+DOTS = [
+    (114.1, 22.5, "SHENZHEN", 8, -4),
+    (48.0, 29.0, "GULF", -6, -16),
+    (34.5, 31.5, "GAZA", -42, -4),
+    (34.0, 45.0, "CRIMEA", -10, -16),
+    (46.7, 24.6, "RIYADH", 8, 4),
+    (56.2, 26.2, None, 0, 0),
+    (127.0, 37.5, "SEOUL", 8, -4),
+    (90.4, 23.8, None, 0, 0),
+    (86.0, 20.0, None, 0, 0),
+    (73.0, 33.7, None, 0, 0),
+    (-0.1, 51.5, None, 0, 0),
+    (2.35, 48.85, None, 0, 0),
+    (32.85, 39.9, None, 0, 0),
+    (7.7, 45.07, None, 0, 0),
+    (-77.0, 38.9, None, 0, 0),
+    (-81.0, 28.0, None, 0, 0),
+    (-122.4, 37.8, None, 0, 0),
+    (-66.9, 10.5, None, 0, 0),
+    (38.7, 9.0, None, 0, 0),
+    (32.5, 15.6, None, 0, 0),
+    (45.3, 2.0, None, 0, 0),
+    (15.3, -4.3, None, 0, 0),
+    (149.1, -35.3, None, 0, 0),
+    (178.4, -17.7, None, 0, 0),
+    (184.8, -21.1, None, 0, 0),
+]
+
+DATE_CHECK_BODY = (
+    "Every story on this page happened or was first reported on "
+    "Thursday 19 November 2026.",
+    "Left out on purpose \u2014 18 Nov news: EU\u2013Indonesia trade pact; "
+    "U.S. measles-elimination loss; Alaska Senate result; EU \u20ac45bn "
+    "Ukraine loan; Voyager 1 one light-day.",
+)
+
+FOOTER = ("S&P 500 7,324 (-0.23%)  \u00b7  HANG SENG -2.78%  \u00b7  "
+          "FTSE 100 10,551 (-1.30%)  \u00b7  BRENT $89.30")
+
+
+def wrap(text, fnt, max_w, max_lines=3):
+    """Greedy word wrap to at most max_lines lines; ellipsis if longer."""
     words = text.split()
-    lines, cur = [], ""
-    for w in words:
-        t = (cur + " " + w).strip()
-        if draw.textlength(t, font=fnt) <= max_w:
-            cur = t
+    lines = []
+    cur = ""
+    for word in words:
+        trial = word if not cur else cur + " " + word
+        if fnt.getlength(trial) <= max_w or not cur:
+            cur = trial
         else:
-            if cur:
-                lines.append(cur)
-            cur = w
-    if cur:
+            lines.append(cur)
+            cur = word
+            if len(lines) == max_lines:
+                break
+    if cur and len(lines) < max_lines:
         lines.append(cur)
+    if len(lines) == max_lines and words and not lines[-1].endswith("\u2026"):
+        # Something was left over: mark the last line as truncated.
+        joined = " ".join(lines)
+        if len(joined) < len(text):
+            while lines and fnt.getlength(lines[-1] + "\u2026") > max_w:
+                lines[-1] = lines[-1].rsplit(" ", 1)[0]
+            lines[-1] += "\u2026"
     return lines
 
 
-# (section, headline, detail) — 41 briefs + 1 lead = 42 stories
-SECTIONS = [
-    ("MIDDLE EAST", [
-        ("Iran strikes Gulf states after U.S. hit",
-         "Drones hit Kuwait's Ali Al Salem base and Bahrain"),
-        ("Kuwait says it repelled Iranian attack",
-         "Air defences engaged; no casualties reported"),
-        ("Tanker struck near Khasab in Hormuz",
-         "Engine room hit; crew safe, UKMTO says"),
-        ("Houthi missile aimed at Riyadh shot down",
-         "Saudis plan long Yemen campaign"),
-        ("Israel pushes ground operation in Gaza",
-         "Troops move beyond the Yellow Line"),
-        ("Eisenkot tapped to form Israel government",
-         "President bypasses Netanyahu"),
-    ]),
-    ("EUROPE", [
-        ("Ukraine hits Crimean Bridge a 3rd time",
-         "Traffic closed; damage being assessed"),
-        ("World court set to rule on Myanmar case",
-         "ICJ genocide ruling on the Rohingya"),
-        ("Imamoglu sentenced in CHP case",
-         "Ex-Istanbul mayor + 8 others, Ankara court"),
-        ("France: 4th weekend of price protests",
-         "Nationwide marches against prices"),
-        ("Five EU states plan Rwanda asylum transfers",
-         "Kigali scheme revived by five capitals"),
-    ]),
-    ("ASIA-PACIFIC", [
-        ("IAEA: N. Korea expanded uranium enrichment",
-         "Yongbyon site grew, agency says"),
-        ("Cyclone Aqwan nears India's east coast",
-         "Bay of Bengal landfall expected"),
-        ("S. Korea exam held under AI-cheating curbs",
-         "Phones jammed at Seoul test centres"),
-        ("Unrest in Bangladesh over Hasina's return",
-         "Wage protests spread in Dhaka"),
-        ("U.S., Philippines pursue $2bn+ loan package",
-         "White House announces financing push"),
-        ("Suicide bombing kills 5 in Pakistan",
-         "Checkpoint attack injures 13"),
-    ]),
-    ("AMERICAS", [
-        ("Trump: Iran seeks chemical, biological arms",
-         "President's claim raises stakes"),
-        ("Iran agent jailed 27 years over Trump plot",
-         "U.S. court sentences assassination plotter"),
-        ("Judge extends block on Trump memorial arch",
-         "Washington arch halted 14 more days"),
-        ("Florida floods shut roads and schools",
-         "Torrential rain swamps the state"),
-        ("U.S., Venezuela restore military cooperation",
-         "First contact since Maduro's capture"),
-    ]),
-    ("AFRICA", [
-        ("Ethiopia, Eritrea mass troops on border",
-         "Forces build up amid war fears"),
-        ("Sudan: drones drive civilian toll",
-         "Aid reaches displaced at El Dabba"),
-        ("Somalia crisis deepens over reforms",
-         "Federal tensions rise in Mogadishu"),
-    ]),
-    ("OCEANIA", [
-        ("Fiji, Tonga declare drought emergencies",
-         "Water shortages across the Pacific"),
-        ("Australia jobless rate rises to 4.9%",
-         "Canberra reports softening labour market"),
-    ]),
-    ("MARKETS & TECH", [
-        ("Anthropic prices record IPO at $83 a share",
-         "Biggest AI listing yet; debut today"),
-        ("AI worries drag stocks lower",
-         "Hang Seng -2.78%, FTSE 100 -1.30%"),
-        ("Gold, copper and bitcoin slide",
-         "War and AI fears hit haven assets"),
-        ("GTA VI goes on sale after 13-year wait",
-         "Consoles capped at 30 fps at launch"),
-        ("Waymo pulls driverless taxis off freeways",
-         "U.S. robotaxi retreat in San Francisco"),
-        ("IMF deal unlocks $2.3bn for Egypt",
-         "Cairo programme resumes"),
-    ]),
-    ("SCIENCE & HEALTH", [
-        ("Strain-specific Ebola vaccines to be trialled",
-         "DR Congo to test new shots"),
-        ("Alzheimer's, brain-tumour studies advance",
-         "UK research points to new treatments"),
-        ("Webb confirms rare star merger",
-         "Supergiant swallowed a sun-like star"),
-        ("Antarctic blue whales up tenfold",
-         "Recovery since whaling ended"),
-    ]),
-    ("SPORT & CULTURE", [
-        ("Alcaraz beats Medvedev at ATP Finals",
-         "Turin semi-final goes to the Spaniard"),
-        ("Chelsea beat PSG 1-0 in women's UCL",
-         "London win in Champions League"),
-        ("England win ODI series in Australia",
-         "Hobart decider seals the series"),
-        ("'Human' is Cambridge word of the year",
-         "Dictionary picks the word of 2026"),
-    ]),
-]
-
-# Simplified world map (lon, lat) polygons, equirectangular
-CONTINENTS = [
-    [(-168, 66), (-140, 70), (-125, 72), (-110, 73), (-95, 80), (-85, 66),
-     (-80, 73), (-75, 62), (-70, 44), (-75, 35), (-80, 26), (-85, 30),
-     (-90, 21), (-97, 16), (-105, 20), (-115, 30), (-125, 40), (-125, 49),
-     (-140, 60), (-155, 58), (-165, 60), (-168, 66)],
-    [(-58, 64), (-45, 60), (-40, 70), (-55, 76), (-65, 76), (-58, 64)],
-    [(-78, 7), (-72, 12), (-62, 10), (-52, 5), (-50, 0), (-40, -5),
-     (-35, -8), (-40, -20), (-48, -28), (-55, -35), (-65, -45), (-70, -52),
-     (-73, -40), (-73, -20), (-77, -12), (-80, -5), (-78, 7)],
-    [(-17, 15), (-10, 30), (0, 36), (10, 37), (20, 32), (30, 31), (35, 28),
-     (43, 12), (51, 11), (48, 2), (40, -5), (40, -15), (35, -25), (28, -33),
-     (18, -35), (12, -18), (9, 4), (-8, 5), (-17, 15)],
-    [(-10, 36), (-9, 43), (-2, 48), (0, 50), (5, 53), (8, 57), (18, 56),
-     (21, 55), (24, 59), (30, 60), (30, 70), (40, 68), (50, 69), (60, 70),
-     (70, 72), (80, 73), (90, 75), (100, 77), (110, 74), (120, 73),
-     (130, 72), (140, 72), (150, 70), (158, 69), (162, 60), (170, 66),
-     (178, 65), (170, 60), (162, 58), (158, 52), (150, 60), (142, 55),
-     (140, 45), (135, 42), (130, 38), (127, 35), (122, 32), (120, 28),
-     (110, 20), (108, 12), (105, 9), (100, 8), (98, 15), (92, 16), (88, 22),
-     (80, 13), (77, 8), (72, 20), (66, 25), (61, 25), (57, 26), (52, 26),
-     (50, 29), (48, 30), (44, 29), (40, 31), (36, 36), (30, 36), (26, 38),
-     (23, 36), (19, 40), (12, 44), (8, 44), (3, 43), (-2, 37), (-9, 37),
-     (-10, 36)],
-    [(-5, 50), (-3, 53), (-5, 56), (-3, 58), (-1, 57), (0, 53), (-5, 50)],
-    [(113, -22), (114, -30), (115, -35), (124, -33), (130, -32), (137, -35),
-     (140, -38), (147, -39), (150, -37), (153, -27), (153, -20), (146, -19),
-     (142, -11), (136, -12), (132, -11), (126, -14), (122, -17), (118, -20),
-     (113, -22)],
-    [(95, 5), (100, 0), (104, -3), (110, -7), (114, -8), (119, -9),
-     (120, -10), (122, -8), (128, -4), (131, -1), (136, -2), (141, -8),
-     (138, -8), (131, -7), (125, -6), (120, -3), (115, -1), (110, 0),
-     (105, 2), (100, 5), (95, 5)],
-    [(130, 31), (132, 33), (135, 34), (138, 35), (140, 38), (141, 41),
-     (143, 43), (145, 44), (142, 42), (140, 39), (138, 37), (135, 35),
-     (132, 33), (130, 31)],
-]
-# (lon, lat, label or None, label dx, label dy) — story locations on the map
-DOTS = [
-    (114, 22, "SHENZHEN", 6, -6), (56, 27, "GULF", 6, 4),
-    (34, 45, "CRIMEA", -62, -14), (4, 52, None, 0, 0),
-    (126, 39, None, 0, 0), (89, 15, None, 0, 0), (34, 31, "GAZA", 6, 6),
-    (39, 9, None, 0, 0), (32, 15, None, 0, 0), (178, -18, None, 0, 0),
-    (149, -35, None, 0, 0), (-77, 39, None, 0, 0), (0, 51, None, 0, 0),
-    (7, 45, None, 0, 0), (33, 40, None, 0, 0), (47, 25, None, 0, 0),
-    (48, 29, None, 0, 0),
-]
-
-img = Image.new("RGB", (W, H), PAPER)
-d = ImageDraw.Draw(img)
-
-# ---- masthead ----
-d.rectangle([0, 0, W, 104], fill=NAVY)
-f_title = font(F_SERIF_B, 52)
-d.text((W // 2, 10), "THE WORLD TODAY", font=f_title, fill=(255, 255, 255), anchor="ma")
-f_date = font(F_SANS_B, 24)
-d.text((W // 2, 66), "THURSDAY,  19  NOVEMBER  2026", font=f_date, fill=GOLD, anchor="ma")
-
-# ---- lead story ----
-f_kick = font(F_SANS_B, 17)
-d.text((20, 116), "LEAD STORY  ·  SHENZHEN — FIRST THREE-WAY SUMMIT", font=f_kick, fill=RED, anchor="la")
-f_count = font(F_SANS_B, 15)
-d.text((W - 20, 116), "42 STORIES · 6 CONTINENTS", font=f_count, fill=RED, anchor="ra")
-f_head = font(F_SERIF_B, 40)
-d.text((20, 138), "TRUMP, XI & PUTIN MEET", font=f_head, fill=INK, anchor="la")
-d.text((20, 182), "IN SHENZHEN", font=f_head, fill=INK, anchor="la")
-f_sub = font(F_SANS, 18)
-sub = ("The U.S., Chinese and Russian leaders hold their first three-way summit, "
-       "on the APEC sidelines. Agenda: Ukraine, Iran, nuclear arms, trade and AI.")
-for i, line in enumerate(wrap(d, sub, f_sub, W - 40)):
-    d.text((20, 230 + i * 23), line, font=f_sub, fill=MUTED, anchor="la")
-d.line([20, 288, W - 20, 288], fill=BORDER, width=2)
-
-# ---- map panel ----
-MX0, MY0, MX1, MY1 = 16, 296, 620, 428
-d.rectangle([MX0, MY0, MX1, MY1], fill=MAPSEA, outline=BORDER, width=2)
+def text_halo(draw, xy, s, fnt, fill, halo=(255, 255, 255)):
+    x, y = xy
+    for dx, dy in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+        draw.text((x + dx, y + dy), s, font=fnt, fill=halo)
+    draw.text((x, y), s, font=fnt, fill=fill)
 
 
-def mxy(lon, lat):
-    x = MX0 + 8 + (lon + 170) / 360.0 * (MX1 - MX0 - 16)
-    y = MY0 + 6 + (80 - lat) / 140.0 * (MY1 - MY0 - 12)
-    return x, y
+def column_height(sections, head_f, sub_f, gap, col_w):
+    """Total height of a column's sections at the given fonts."""
+    total = 0
+    for header, items in sections:
+        total += 20  # header + rule
+        for headline, sub in items:
+            lines = wrap(headline, head_f, col_w, max_lines=2)
+            total += len(lines) * 15 + 13 + gap
+    return total
 
 
-for poly in CONTINENTS:
-    d.polygon([mxy(lon, lat) for lon, lat in poly], fill=MAPLAND)
-f_map = font(F_SANS_B, 11)
-d.text((MX0 + 10, MY0 + 6), "WHERE TODAY HAPPENED", font=f_map, fill=NAVY, anchor="la")
-f_dot = font(F_SANS_B, 10)
-for lon, lat, label, dx, dy in DOTS:
-    x, y = mxy(lon, lat)
-    d.ellipse([x - 4, y - 4, x + 4, y + 4], fill=RED, outline=(255, 255, 255), width=1)
-    if label:
-        d.text((x + dx, y + dy), label, font=f_dot, fill=INK, anchor="la")
-
-# ---- DATE CHECK box ----
-BX0, BY0, BX1, BY1 = 636, 296, 1008, 428
-d.rectangle([BX0, BY0, BX1, BY1], fill=TILE, outline=RED, width=3)
-f_dc_head = font(F_SANS_B, 17)
-d.text((BX0 + 12, BY0 + 8), "DATE CHECK", font=f_dc_head, fill=RED, anchor="la")
-f_dc = font(F_SANS, 13)
-dc_text = ("Every story on this page happened or was first reported on "
-           "Thursday 19 November 2026.")
-for i, line in enumerate(wrap(d, dc_text, f_dc, BX1 - BX0 - 24)):
-    d.text((BX0 + 12, BY0 + 34 + i * 17), line, font=f_dc, fill=INK, anchor="la")
-f_dc2 = font(F_SANS, 12)
-dc2 = ("Left out on purpose — 18 Nov news: EU-Indonesia trade pact; "
-       "U.S. measles-elimination loss; Alaska Senate result; EU 45bn "
-       "Ukraine loan; Voyager 1 one light-day.")
-for i, line in enumerate(wrap(d, dc2, f_dc2, BX1 - BX0 - 24)):
-    d.text((BX0 + 12, BY0 + 76 + i * 15), line, font=f_dc2, fill=MUTED, anchor="la")
-
-# ---- briefs: 3 columns, sections in order ----
-COL_X = [16, 352, 688]
-COL_W = 320
-TOP = 440
-BOTTOM = 956
-
-
-def split_columns(counts):
-    flat = []
-    for sec, items in SECTIONS:
-        flat.append(("sec", sec))
-        for head, det in items:
-            flat.append(("item", (head, det, sec)))
-    cols = [[], [], []]
-    idx = 0
-    for ci in range(3):
-        take, n = counts[ci], 0
-        if idx < len(flat) and flat[idx][0] == "item":
-            cols[ci].append(("sec", flat[idx][1][2]))
-        while idx < len(flat) and n < take:
-            kind, payload = flat[idx]
-            if kind == "sec":
-                cols[ci].append(("sec", payload))
-                idx += 1
-            else:
-                cols[ci].append(("item", payload))
-                n += 1
-                idx += 1
-        # drop a trailing orphan header (its items start the next column)
-        if cols[ci] and cols[ci][-1][0] == "sec":
-            cols[ci].pop()
-    return cols
+def draw_columns(draw, top, bottom, col_w):
+    """Lay out the three story columns; shrink fonts until they fit."""
+    by_name = dict(STORIES)
+    x_starts = [16, 354, 692]
+    for head_size, sub_size, gap in ((13, 11, 7), (12, 10, 6), (11, 10, 5)):
+        head_f = font(SANS_B, head_size)
+        sub_f = font(SANS, sub_size)
+        sect_f = font(SANS_B, 14)
+        heights = []
+        for names in COLUMNS:
+            sections = [(n, by_name[n]) for n in names]
+            heights.append(column_height(sections, head_f, sub_f, gap, col_w))
+        if max(heights) <= bottom - top:
+            break
+    for x0, names in zip(x_starts, COLUMNS):
+        y = top
+        for name in names:
+            items = by_name[name]
+            draw.text((x0, y), name, font=sect_f, fill=RED)
+            y += 18
+            draw.line([(x0, y), (x0 + col_w, y)], fill=RED, width=1)
+            y += 6
+            for headline, sub in items:
+                for line in wrap(headline, head_f, col_w, max_lines=2):
+                    draw.text((x0, y), line, font=head_f, fill=NAVY)
+                    y += 15
+                for line in wrap(sub, sub_f, col_w, max_lines=1):
+                    draw.text((x0, y), line, font=sub_f, fill=GREY)
+                    y += 13
+                y += gap
+            y += 6
+    return head_size
 
 
-def measure(cols, hs, ds):
-    f_h = font(F_SANS_B, hs)
-    f_dt = font(F_SANS, ds)
-    heights = []
-    for ci in range(3):
-        y = 0
-        for kind, payload in cols[ci]:
-            if kind == "sec":
-                y += 17
-            else:
-                head, det, _sec = payload
-                hl = wrap(d, head, f_h, COL_W)
-                dl = wrap(d, det, f_dt, COL_W)
-                y += len(hl) * (hs + 3) + len(dl) * (ds + 3) + 5
-        heights.append(y)
-    return heights
+def draw_map(draw, box):
+    """Stylised world map with red dots on the day's locations."""
+    x0, y0, w, h = box
+    draw.rectangle([x0, y0, x0 + w, y0 + h], fill=SEA,
+                   outline=LAND_EDGE, width=1)
+
+    def proj(lon, lat):
+        return (x0 + (lon + 170.0) / 360.0 * w,
+                y0 + (84.0 - lat) / 142.0 * h)
+
+    for poly in CONTINENTS:
+        pts = [proj(lon, lat) for lon, lat in poly]
+        draw.polygon(pts, fill=LAND, outline=LAND_EDGE)
+    label_f = font(SANS_B, 10)
+    for lon, lat, label, dx, dy in DOTS:
+        px, py = proj(lon, lat)
+        draw.ellipse([px - 4, py - 4, px + 4, py + 4], fill=DOT,
+                     outline=(255, 255, 255), width=1)
+        if label:
+            text_halo(draw, (px + dx, py + dy), label, label_f, NAVY)
+    # Title last, with a halo, so the land never covers it.
+    text_halo(draw, (x0 + 8, y0 + 5), "WHERE TODAY HAPPENED",
+              font(SANS_B, 11), NAVY, halo=SEA)
 
 
-cols = split_columns([14, 13, 14])
-for hs, ds in [(12, 10), (11, 10), (11, 9)]:
-    heights = measure(cols, hs, ds)
-    if max(heights) <= BOTTOM - TOP:
-        break
-print("column heights:", heights, "head", hs, "detail", ds)
+def draw_date_check(draw, box):
+    x0, y0, w, h = box
+    draw.rectangle([x0, y0, x0 + w, y0 + h], fill=(255, 255, 255),
+                   outline=RED, width=3)
+    title_f = font(SANS_B, 20)
+    body_f = font(SANS, 12)
+    draw.text((x0 + 12, y0 + 10), "DATE CHECK", font=title_f, fill=RED)
+    y = y0 + 40
+    for para in DATE_CHECK_BODY:
+        for line in wrap(para, body_f, w - 24, max_lines=4):
+            draw.text((x0 + 12, y), line, font=body_f, fill=INK)
+            y += 16
+        y += 4
 
-f_h = font(F_SANS_B, hs)
-f_dt = font(F_SANS, ds)
-f_sec = font(F_SANS_B, 12)
-for ci in range(3):
-    x = COL_X[ci]
-    y = TOP
-    for kind, payload in cols[ci]:
-        if kind == "sec":
-            d.text((x, y), payload, font=f_sec, fill=RED, anchor="la")
-            d.line([x, y + 14, x + COL_W, y + 14], fill=BORDER, width=1)
-            y += 17
-        else:
-            head, det, _sec = payload
-            hl = wrap(d, head, f_h, COL_W)
-            for i, line in enumerate(hl):
-                d.text((x, y + i * (hs + 3)), line, font=f_h, fill=INK, anchor="la")
-            y += len(hl) * (hs + 3)
-            dl = wrap(d, det, f_dt, COL_W)
-            for i, line in enumerate(dl):
-                d.text((x, y + i * (ds + 3)), line, font=f_dt, fill=MUTED, anchor="la")
-            y += len(dl) * (ds + 3) + 5
 
-# ---- footer ----
-d.rectangle([0, 962, W, H], fill=NAVY)
-foot_text = ("S&P 500  -0.23%   ·   HANG SENG  -2.78%   ·   FTSE 100  -1.30%   ·   "
-             "BRENT $89.30   ·   GOLD, COPPER & BITCOIN DOWN")
-f_foot = font(F_SANS_B, 17)
-while d.textlength(foot_text, font=f_foot) > W - 32 and f_foot.size > 12:
-    f_foot = font(F_SANS_B, f_foot.size - 1)
-d.text((W // 2, 980), foot_text, font=f_foot, fill=(255, 255, 255), anchor="ma")
+def render():
+    img = Image.new("RGB", (W, H), PAPER)
+    draw = ImageDraw.Draw(img)
 
-img.save(os.path.join(HERE, "news.png"), "PNG", optimize=True)
-print("saved news.png")
+    # Masthead.
+    draw.rectangle([0, 0, W, 96], fill=NAVY)
+    title = "THE WORLD TODAY"
+    tf = font(SERIF_B, 62)
+    draw.text(((W - tf.getlength(title)) / 2, 6), title, font=tf,
+              fill=(255, 255, 255))
+    date = "THURSDAY, 19 NOVEMBER 2026"
+    df = font(SANS_B, 25)
+    draw.text(((W - df.getlength(date)) / 2, 66), date, font=df, fill=GOLD)
+
+    # Lead kicker.
+    kf = font(SANS_B, 15)
+    draw.text((16, 106), "LEAD STORY  \u00b7  SHENZHEN \u2014 FIRST THREE-WAY SUMMIT",
+              font=kf, fill=RED)
+    right = "42 STORIES  \u00b7  6 CONTINENTS"
+    draw.text((W - 16 - kf.getlength(right), 106), right, font=kf, fill=RED)
+
+    # Lead headline + deck.
+    hf = font(SERIF_B, 46)
+    draw.text((16, 128), "TRUMP, XI & PUTIN MEET", font=hf, fill=NAVY)
+    draw.text((16, 176), "IN SHENZHEN", font=hf, fill=NAVY)
+    deck = ("The U.S., Chinese and Russian leaders hold their first "
+            "three-way summit, on the APEC sidelines. Agenda: Ukraine, "
+            "Iran, nuclear arms, trade and AI.")
+    deck_f = font(SANS, 16)
+    y = 228
+    for line in wrap(deck, deck_f, W - 32, max_lines=2):
+        draw.text((16, y), line, font=deck_f, fill=(68, 68, 68))
+        y += 20
+
+    # Map + date check row.
+    draw_map(draw, (16, 274, 590, 134))
+    draw_date_check(draw, (622, 274, 386, 134))
+
+    # Story columns.
+    draw_columns(draw, 422, 984, 316)
+
+    # Markets footer.
+    draw.rectangle([0, 992, W, H], fill=NAVY)
+    ff = font(SANS_B, 15)
+    draw.text(((W - ff.getlength(FOOTER)) / 2, 1002), FOOTER, font=ff,
+              fill=(255, 255, 255))
+    return img
+
+
+def main():
+    here = os.path.dirname(os.path.abspath(__file__))
+    out = os.path.join(here, "news.png")
+    render().save(out, "PNG", optimize=True)
+    data = open(out, "rb").read()
+    print("news.png:", len(data), "bytes")
+    print("sha256:", hashlib.sha256(data).hexdigest())
+
+
+if __name__ == "__main__":
+    main()
