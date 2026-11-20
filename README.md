@@ -1,8 +1,8 @@
 # The World in One Day — Thursday 19 November 2026
 
-![Bounty](https://make.fun/badge/news-image-20261119.svg)
-![Rank](https://make.fun/badge/news-image-20261119/dylikeu/news-image-20261119/rank.svg)
-![Reward](https://make.fun/badge/news-image-20261119/dylikeu/news-image-20261119/reward.svg)
+[![make.fun · news-image-20261119](https://make.fun/badge/news-image-20261119.svg)](https://make.fun/bounty/news-image-20261119?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261119)
+[![rank](https://make.fun/badge/news-image-20261119/dylikeu/news-image-20261119/rank.svg)](https://make.fun/bounty/news-image-20261119/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261119)
+[![reward](https://make.fun/badge/news-image-20261119/dylikeu/news-image-20261119/reward.svg)](https://make.fun/bounty/news-image-20261119?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261119)
 
 One front page that sums up the world's news of **Thursday 19 November 2026**:
 **42 stories across 7 regions** — politics, economy, tech, science, health,
@@ -13,7 +13,7 @@ The day's leads: the first Trump–Xi–Putin three-way summit in Shenzhen,
 the ICJ's final Rohingya genocide ruling, a record $81.3bn Anthropic IPO,
 and the worldwide launch of GTA VI.
 
-Bounty: https://make.fun/bounty/news-image-20261119
+Bounty: [news-image-20261119 on make.fun](https://make.fun/bounty/news-image-20261119)
 
 Built with https://make.fun/r/ec115nvc
 
